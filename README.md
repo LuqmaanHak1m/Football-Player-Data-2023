@@ -34,54 +34,17 @@ The ETL pipeline is modularized across three main steps:
 **File:** `src/extract/data_extractor.py`  
 Reads raw player CSV files for a specific year from `data/raw/`.
 
-```python
-from pathlib import Path
-import pandas as pd
-
-def extract(year: int = 2023) -> pd.DataFrame:
-    base_dir = Path(__file__).resolve().parents[2]
-    file_path = base_dir / "data" / "raw" / f"raw_player_data_{year}.csv"
-    df = pd.read_csv(file_path)
-    print(f"✅ Extracted {len(df)} records from {file_path.name}")
-    return df
-```
-
 ---
 
 ### 2. **Transform**
 **File:** `src/transform/data_transform.py`  
 Performs column normalization, data cleaning, and consistency checks.
 
-```python
-import pandas as pd
-
-def transform(df: pd.DataFrame) -> pd.DataFrame:
-    df = df.copy()
-    df.columns = df.columns.str.strip().str.lower().str.replace(" ", "_")
-    df = df.dropna(subset=["name"])
-    print(f"✅ Transformed dataset shape: {df.shape}")
-    return df
-```
-
 ---
 
 ### 3. **Load**
 **File:** `src/load/data_loader.py`  
 Loads the cleaned data into a **SQLite** database stored in `data/clean/football.db`.
-
-```python
-import sqlite3
-from pathlib import Path
-
-def load_to_sqlite(df, table_name="players_2023"):
-    base_dir = Path(__file__).resolve().parents[2]
-    db_path = base_dir / "data" / "clean" / "football.db"
-    db_path.parent.mkdir(parents=True, exist_ok=True)
-
-    with sqlite3.connect(db_path) as conn:
-        df.to_sql(table_name, conn, if_exists="replace", index=False)
-        print(f"✅ Loaded {len(df)} records into {table_name} ({db_path})")
-```
 
 ---
 
@@ -127,17 +90,6 @@ You can inspect your database using **[DB Browser for SQLite](https://sqlitebrow
 Here’s an example view of the loaded 2023 data:
 
 ![Screenshot: DB Browser showing `players_2023` table](screenshots/dbBrowser.png)
-```
-data/clean/football.db
-└── Table: players_2023
-      ├── uid
-      ├── name
-      ├── club
-      ├── nat
-      ├── age
-      ├── position
-      └── ...
-```
 
 ---
 
@@ -165,19 +117,10 @@ Install dependencies from `requirements.txt`:
 pip install -r requirements.txt
 ```
 
-Recommended libraries:
-```
-pandas
-sqlite3
-pathlib
-```
-
 ---
 
 ## 🧑‍💻 Author
-**Your Name**  
-Data Engineer & Football Analytics Enthusiast ⚽  
-📧 *[your.email@example.com]*
+**Luqmaan Abdullahi**  
 
 ---
 
